@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import Bg from "./components/Bg";
 
 const socialMediaSizes = [
   {
@@ -79,7 +80,6 @@ const socialMediaSizes = [
     value: { name: "Threads Post", width: 1080, height: 1350 },
   },
 
-  // Generic Sizes
   {
     label: "Square (1:1)(1080x1080)",
     value: { name: "Square (1:1)", width: 1080, height: 1080 },
@@ -105,7 +105,7 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSelectionChange = (selectedOptions) => {
-    setSelectedSizes(selectedOptions.map((option) => option.value)); // Store selected sizes
+    setSelectedSizes(selectedOptions.map((option) => option.value));
   };
 
   const handleImageUpload = (event) => {
@@ -123,7 +123,6 @@ const App = () => {
     img.src = image;
 
     img.onload = () => {
-      // Ensure the image is fully loaded before processing
       console.log("Image loaded successfully");
 
       const links = selectedSizes.map(({ name, width, height }) => {
@@ -143,14 +142,12 @@ const App = () => {
     const originalRatio = img.width / img.height;
     const targetRatio = targetWidth / targetHeight;
 
-    // Create a canvas with the final size
     const paddedCanvas = document.createElement("canvas");
     paddedCanvas.width = targetWidth;
     paddedCanvas.height = targetHeight;
     const ctx = paddedCanvas.getContext("2d");
 
-    // Set background color (optional, default is transparent)
-    ctx.fillStyle = "#ffffff"; // Change this for a different background
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, targetWidth, targetHeight);
 
     let drawWidth, drawHeight, offsetX, offsetY;
@@ -160,22 +157,20 @@ const App = () => {
       drawWidth = targetWidth;
       drawHeight = targetWidth / originalRatio;
       offsetX = 0;
-      offsetY = (targetHeight - drawHeight) / 2; // Center vertically
+      offsetY = (targetHeight - drawHeight) / 2;
     } else {
       // Image is taller, fit by height
       drawHeight = targetHeight;
       drawWidth = targetHeight * originalRatio;
-      offsetX = (targetWidth - drawWidth) / 2; // Center horizontally
+      offsetX = (targetWidth - drawWidth) / 2;
       offsetY = 0;
     }
 
-    // Draw the image in the center without cutting
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
     return paddedCanvas;
   };
 
-  // Resize image smoothly
   const resizeCanvas = (croppedCanvas, targetWidth, targetHeight) => {
     const resizedCanvas = document.createElement("canvas");
     resizedCanvas.width = targetWidth;
@@ -189,7 +184,6 @@ const App = () => {
     return resizedCanvas;
   };
 
-  // Create a download link
   const createDownloadLink = (canvas, name) => {
     return new Promise((resolve) => {
       canvas.toBlob(
@@ -204,150 +198,152 @@ const App = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-6 bg-gray-200 min-h-screen font-mono w-full">
-      <div className="flex items-center justify-between">
-        <div className="absolute top-4 left-4">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-600 transition cursor-pointer transition-all duration-300"
-            onClick={() => setIsModalOpen(true)}
-          >
-            About
-          </button>
-        </div>
-
-        <div className="absolute top-4 right-6 flex gap-4">
-          <a
-            href="https://github.com/Rahulgarg405"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaGithub className="text-black text-3xl cursor-pointer" />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/rahul-garg-210778257"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaLinkedin className="text-blue-600 text-3xl cursor-pointer" />
-          </a>
-        </div>
-      </div>
-      <div className="text-center mb-12 lg:mt-0 mt-7">
-        <h1 className="text-4xl font-extrabold">
-          Post-Fit : Resize Your Images in Seconds
-        </h1>
-        <p className="text-lg mt-2 opacity-80">
-          Perfectly formatted for all social media platforms.
-        </p>
-      </div>
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg text-center">
-        <div className="">
-          <h1 className="text-3xl ">Image Resizer</h1>
-          <div className="flex justify-center m-3">
-            <div
-              className="relative w-64 cursor-pointer shadow-xl font-bold text-lg"
-              onClick={() => document.getElementById("fileInput").click()}
-            >
-              <input
-                id="fileInput"
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-              <div
-                className="bg-blue-500
-            font-sans text-white text-center py-3 rounded-lg shadow-md hover:bg-indigo-600 hover:scale-110 hover:-translate-y-1 
-            transition-all duration-300"
-              >
-                Upload Image
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center m-3">
-            {image && (
-              <img
-                src={image}
-                alt="Preview"
-                style={{ width: "200px", marginTop: "10px" }}
-              />
-            )}
-          </div>
-
-          <h3 className="text-xl">Select Platforms & Post Types</h3>
-          <div className="">
-            <Select
-              options={socialMediaSizes}
-              isMulti
-              onChange={handleSelectionChange}
-              placeholder="Select platforms..."
-            />
-          </div>
-          <div className="flex justify-center">
+    <Bg>
+      <div className="flex flex-col items-center p-6 min-h-screen font-mono w-full z-0 relative">
+        <div className="flex items-center justify-between">
+          <div className="absolute top-4 left-4">
             <button
-              onClick={processImage}
-              className="m-5 bg-blue-500 p-1 text-lg font-bold text-center w-48 rounded-xl text-white cursor-pointer hover:bg-indigo-600 transition-all duration-300"
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-600  cursor-pointer transition-all duration-300"
+              onClick={() => setIsModalOpen(true)}
             >
-              Generate Images
+              About
             </button>
           </div>
-        </div>
 
-        {/* Download Links */}
-        {/* Download Links (Fixed Layout + Scrollable) */}
-        <div className="mt-6 w-full max-w-md overflow-y-auto max-h-64">
-          {downloadLinks.map(({ name, link }, index) => (
+          <div className="absolute top-4 right-6 flex gap-4">
             <a
-              key={index}
-              href={link}
-              download={`${name}.jpg`}
-              className="block bg-green-500 text-white px-4 py-2 rounded-lg my-2 hover:bg-green-600 text-center"
+              href="https://github.com/Rahulgarg405"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Download {name}
+              <FaGithub className="text-black text-3xl cursor-pointer" />
             </a>
-          ))}
-        </div>
-      </div>
-      <AnimatePresence>
-        {isModalOpen && (
-          <>
-            {/* Transparent Blurred Background */}
-            <motion.div
-              className="fixed inset-0 bg-transparent backdrop-blur-md"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-            />
-
-            {/* Modal */}
-            <motion.div
-              className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900/80 p-6 rounded-2xl shadow-3xl w-[90%] max-w-lg text-center text-white"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", stiffness: 120, damping: 10 }}
+            <a
+              href="https://www.linkedin.com/in/rahul-garg-210778257"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <h2 className="text-2xl font-semibold mb-4">About Post-Fit</h2>
-              <p className="text-white font-semibold mb-4">
-                Post-Fit is a powerful tool that resizes images for multiple
-                social media platforms with just one upload. Optimized for
-                Instagram, Facebook, Twitter, LinkedIn, and more!
-              </p>
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
-                onClick={() => setIsModalOpen(false)}
+              <FaLinkedin className="text-blue-600 text-3xl cursor-pointer" />
+            </a>
+          </div>
+        </div>
+        <div className="text-center mb-12 lg:mt-0 mt-7">
+          <h1 className="text-4xl font-extrabold">
+            Post-Fit : Resize Your Images in Seconds
+          </h1>
+          <p className="text-lg mt-2 opacity-80">
+            Perfectly formatted for all social media platforms.
+          </p>
+        </div>
+        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg text-center">
+          <div className="">
+            <h1 className="text-3xl ">Image Resizer</h1>
+            <div className="flex justify-center m-3">
+              <div
+                className="relative w-64 cursor-pointer shadow-xl font-bold text-lg"
+                onClick={() => document.getElementById("fileInput").click()}
               >
-                Close
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <div
+                  className="bg-blue-500
+            font-sans text-white text-center py-3 rounded-lg shadow-md hover:bg-indigo-600 hover:scale-110 hover:-translate-y-1 
+            transition-all duration-300"
+                >
+                  Upload Image
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center m-3">
+              {image && (
+                <img
+                  src={image}
+                  alt="Preview"
+                  style={{ width: "200px", marginTop: "10px" }}
+                />
+              )}
+            </div>
+
+            <h3 className="text-xl">Select Platforms & Post Types</h3>
+            <div className="">
+              <Select
+                options={socialMediaSizes}
+                isMulti
+                onChange={handleSelectionChange}
+                placeholder="Select platforms..."
+              />
+            </div>
+            <div className="flex justify-center">
+              <button
+                onClick={processImage}
+                className="m-5 bg-blue-500 p-1 text-lg font-bold text-center w-48 rounded-xl text-white cursor-pointer hover:bg-indigo-600 transition-all duration-300"
+              >
+                Generate Images
               </button>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-      <footer className="text-center text-gray-600 mt-15 pb-4">
-        © {new Date().getFullYear()} Post-Fit. All rights reserved.
-      </footer>
-    </div>
+            </div>
+          </div>
+
+          {/* Download Links */}
+          {/* Download Links (Fixed Layout + Scrollable) */}
+          <div className="mt-6 w-full max-w-md overflow-y-auto max-h-64">
+            {downloadLinks.map(({ name, link }, index) => (
+              <a
+                key={index}
+                href={link}
+                download={`${name}.jpg`}
+                className="block bg-green-500 text-white px-4 py-2 rounded-lg my-2 hover:bg-green-600 text-center"
+              >
+                Download {name}
+              </a>
+            ))}
+          </div>
+        </div>
+        <AnimatePresence>
+          {isModalOpen && (
+            <>
+              <motion.div
+                className="fixed inset-0 bg-transparent backdrop-blur-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsModalOpen(false)}
+              />
+
+              {/* Modal */}
+              <motion.div
+                className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900/80 p-6 rounded-2xl shadow-3xl w-[90%] max-w-lg text-center text-white"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 120, damping: 10 }}
+              >
+                <h2 className="text-2xl font-semibold mb-4">About Post-Fit</h2>
+                <p className="text-white font-semibold mb-4">
+                  Post-Fit is a powerful tool that resizes images aspect ratios
+                  for multiple social media platforms with just one upload.
+                  Optimized for Instagram, Facebook, Twitter, LinkedIn, and
+                  more!
+                </p>
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+        <footer className="text-center text-gray-600 mt-15 pb-4">
+          © {new Date().getFullYear()} Post-Fit. All rights reserved.
+        </footer>
+      </div>
+    </Bg>
   );
 };
 
